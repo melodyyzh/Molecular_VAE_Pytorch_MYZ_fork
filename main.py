@@ -38,7 +38,7 @@ def get_arguments():
                         help='Learning Rate for training.')
 
     parser.add_argument('--gpu', type=int, metavar='N', default=0,
-						help='which GPU to use')
+                        help='which GPU to use')
 
     return parser.parse_args()
 
@@ -52,7 +52,7 @@ def main():
     smiles = data[SMILES_COL_NAME]
     #labels = np.array(data['p_np'])
     labels = np.zeros((len(smiles),1))
-    print("Example Smiles",smiles[0:10])
+    print("Example Smiles\n",smiles[0:10])
 
     ##Building the Vocab from DeepChem's Regex
     vocab, inv_dict = build_vocab(data)
@@ -96,8 +96,8 @@ def main():
     if use_vae:
         ##Using Molecular VAE Arch as in the Paper with Conv Encoder and GRU Decoder
         enc = Conv_Encoder(vocab_size).to(device)
-        dec = GRU_Decoder(vocab_size,latent_dim).to(device)
-        model = Molecule_VAE(enc, dec,device,latent_dim).to(device)
+        dec = GRU_Decoder(vocab_size,args.latent_dim).to(device)
+        model = Molecule_VAE(enc, dec,device,args.latent_dim).to(device)
         model.get_num_params()
     else:
         #Using FC layers for both Encoder and Decoder
@@ -193,8 +193,8 @@ def main():
                     }
 
         #Saves when loss is lower than best validation loss till now and all models after 100 epochs
-       	if epoch_loss_recon_val < best_epoch_loss_val or epoch > 100:
-			torch.save(checkpoint, args.save_loc+'/'+str(epoch)+'checkpoint.pth')
+        if epoch_loss_recon_val < best_epoch_loss_val or epoch > 100:
+            torch.save(checkpoint, args.save_loc+'/'+str(epoch)+'checkpoint.pth')
         #update best epoch loss
         best_epoch_loss_val = min(epoch_loss_val, best_epoch_loss_val)
     #evaluate(model, X_train, vocab, inv_dict)
