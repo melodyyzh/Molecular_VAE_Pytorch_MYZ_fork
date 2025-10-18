@@ -152,7 +152,9 @@ def main():
 
             input_recon = model(inputs)
             latent_loss_val = latent_loss(model.z_mean, model.z_sigma)
-            loss = F.binary_cross_entropy(input_recon, inputs, size_average=False) + latent_loss_val
+            loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
+            loss = loss_fn(input_recon, inputs) + latent_loss_val
+            # loss = F.binary_cross_entropy(input_recon, inputs, size_average=False) + latent_loss_val
             loss.backward()
             optimizer.step()
             epoch_loss += loss.item()
@@ -176,7 +178,9 @@ def main():
             #inputs = inputs.reshape(batch_size, -1).float()
             input_recon = model(inputs)
             latent_loss_val = latent_loss(model.z_mean, model.z_sigma)
-            loss = F.binary_cross_entropy(input_recon, inputs, size_average=False) + latent_loss_val
+            loss_fn = torch.nn.BCEWithLogitsLoss(reduction='sum')
+            loss = loss_fn(input_recon, inputs) + latent_loss_val
+            #loss = F.binary_cross_entropy(input_recon, inputs, size_average=False) + latent_loss_val
             epoch_loss_val += loss.item()
         print("Validation Loss -- {:.3f}".format(epoch_loss_val/x_val_data_per_epoch))
         print()
@@ -193,7 +197,7 @@ def main():
                     }
 
         #Saves when loss is lower than best validation loss till now and all models after 100 epochs
-        if epoch_loss_recon_val < best_epoch_loss_val or epoch > 100:
+        if epoch_loss_val < best_epoch_loss_val or epoch > 100:
             torch.save(checkpoint, args.save_loc+'/'+str(epoch)+'checkpoint.pth')
         #update best epoch loss
         best_epoch_loss_val = min(epoch_loss_val, best_epoch_loss_val)
