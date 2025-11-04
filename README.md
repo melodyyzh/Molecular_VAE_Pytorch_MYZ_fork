@@ -7,6 +7,7 @@ Link to Paper - [arXiv](https://arxiv.org/abs/1610.02415)
 <div style="text-align:center"><img src="https://github.com/Ishan-Kumar2/Molecular_VAE_Pytorch/blob/master/Sample_imgs/cover_img.jpg" /></div>
 
 ----
+## Note that this readme file has been modified to match my modifications
 
 ## Getting the Repo
 To clone the repo on your machine run -\
@@ -24,7 +25,7 @@ For this work I have used the ChEMBL Dataset which can be found [here](https://w
 Since the whole dataset has over 16M datapoints, I have decided to use a subset of that data.
 To get the subset you can either use the train, val data present in ``/data``
 or run the ``data_prep.py`` file as - \
-`python data_prep.py /path/to/downloaded_data col_name_smiles /save/path 50000` \
+`python data_prep.py "smiles" /save/path 50000` Note that this line has been modified to accomondate direct loading of QM9 dataset in the script. \
 \
 This will prepare 2 CSV files `/save/path_train.csv` and `/save/path_val.csv` both of length 50k and having randomly shuffled datapoints.
 

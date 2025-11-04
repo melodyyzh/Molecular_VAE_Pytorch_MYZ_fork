@@ -1,18 +1,38 @@
 import pandas as pd
 import argparse
+from datasets import load_dataset
 
 parser = argparse.ArgumentParser(description='Data Prep')
-parser.add_argument('file_loc', type=str, help='Path to the downloading dataset and name')
+# parser.add_argument('file_loc', type=str, help='Path to the downloading dataset and name')
 parser.add_argument('smiles_col_name', type=str, help='Name of the Column of SMILES')
 parser.add_argument('save_path', type=str, help='Save Path of the Processed Data (CSV)')
 parser.add_argument('len',type=int,help='Number of Training Points needed in Train and Val Data')
 args = parser.parse_args()
 
-chembl22 = pd.read_csv(args.file_loc, sep=';', quotechar='"')
+print("Loading dataset 'n0w0f/qm9-csv' from Hugging Face...")
+ds = load_dataset("n0w0f/qm9-csv")
+
+# Combine all splits (e.g., 'train', 'validation', 'test') into one DataFrame
+all_dfs = []
+for split in ds.keys():
+    print(f"Processing split: {split}")
+    all_dfs.append(ds[split].to_pandas())
+
+# 'chembl22' is now our combined DataFrame from all splits
+chembl22 = pd.concat(all_dfs, ignore_index=True)
+print("Dataset loaded and combined into a pandas DataFrame.")
+
+# chembl22 = pd.read_csv(args.file_loc, sep=';', quotechar='"')
 
 print("Available columns:")
 print(chembl22.columns.tolist())
 print(f"Looking for column: '{args.smiles_col_name}'")
+
+# Add a check to make sure the column exists
+if args.smiles_col_name not in chembl22.columns:
+    print(f"Error: Column '{args.smiles_col_name}' not found!")
+    print("Please check the available columns and try again.")
+    exit()
 
 print(chembl22[args.smiles_col_name][0:10])
 
